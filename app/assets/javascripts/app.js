@@ -30,10 +30,7 @@ function NewCtrl($scope, $location, Crew) {
   $scope.person = {name: "", description: ""};
 
   $scope.save = function() {
-    var crew = Crew.save({
-      name: $scope.person.name,
-      description: $scope.person.description
-    }, function(response) {
+    var crew = Crew.save($scope.person, function(response) {
       $scope.crew.push(response);
       $location.path("/");
     });
