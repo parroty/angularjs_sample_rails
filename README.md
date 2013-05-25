@@ -30,5 +30,5 @@ Open the url with the browser
 
 ### Screenshot
 
-![htmlimage](http://parroty00.files.wordpress.com/2013/03/angular-sample.png?w=450&h=312)
+![htmlimage](https://raw.github.com/parroty/anglarjs_sample_rails/master/image/image.png)
 
