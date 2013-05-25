@@ -1,5 +1,5 @@
 AnglarjsSampleRails::Application.routes.draw do
-
+  resources :crews
 
   root :to => 'application#index'
   # The priority is based upon order of creation:

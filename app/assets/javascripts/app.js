@@ -1,43 +1,53 @@
-var app = angular.module('app', []).
+var app = angular.module('app', ["ngResource"]).
   config(function ($routeProvider, $locationProvider) {
     $routeProvider.
-        when("/", {templateUrl: "/assets/list.html"}).
-        when("/new", {templateUrl: "/assets/edit.html", controller: "NewCtrl"}).
+        when("/",         {templateUrl: "/assets/list.html", controller: "AppCtrl"}).
+        when("/new",      {templateUrl: "/assets/edit.html", controller: "NewCtrl"}).
         when("/edit/:id", {templateUrl: "/assets/edit.html", controller: "EditCtrl"}).
         otherwise({redirectTo: "/"});
-  });
+  }).
+  config(["$httpProvider", function(provider) {
+    provider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
+  }]);
 
-function EditCtrl($scope, $location, $routeParams) {
+app.factory("Crew", function($resource) {
+  return $resource("/crews/:id", {id: "@id"}, {update: {method: "PUT"}, destroy: {method: "DELETE"}});
+});
+
+function EditCtrl($scope, $location, $routeParams, Crew) {
   $scope.title = "Edit Crew";
+  $scope.person = Crew.get({id: $routeParams.id});
 
-  $scope.person = $scope.crew[$routeParams.id];
   $scope.save = function() {
-    $location.path("/");
-  }
-}
-
-function NewCtrl($scope, $location) {
-  $scope.title = "New Crew";
-
-  $scope.person = {name: "", description: ""};
-  $scope.save = function() {
-    $scope.crew.push($scope.person);
-    $location.path("/");
-  }
-
-}
-
-function AppCtrl($scope, $location){
-  $scope.crew = [
-    {name: "John", description: "Manager"},
-    {name: "Steve", description: "Leader"},
-    {name: "Robert", description: "Engineer"}
-  ];
-
-  $scope.destroy = function() {
-    if (confirm("Are you sure?")) {
-      $scope.crew.splice(self.id, 1);
+    Crew.update({id: $scope.person.id}, $scope.person, function(response){
       $location.path("/");
+    });
+  }
+}
+
+function NewCtrl($scope, $location, Crew) {
+  $scope.title = "New Crew";
+  $scope.person = {name: "", description: ""};
+
+  $scope.save = function() {
+    var crew = Crew.save({
+      name: $scope.person.name,
+      description: $scope.person.description
+    }, function(response) {
+      $scope.crew.push(response);
+      $location.path("/");
+    });
+  }
+}
+
+function AppCtrl($scope, $location, $route, Crew){
+  $scope.crew = Crew.query();
+
+  $scope.destroy = function(id) {
+    if (confirm("Are you sure?")) {
+      Crew.remove({id: id}, function(response){
+        $route.reload();
+      });
     }
   };
 }
