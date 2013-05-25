@@ -37,13 +37,18 @@ function NewCtrl($scope, $location, Crew) {
   }
 }
 
-function AppCtrl($scope, $location, $route, Crew){
+function AppCtrl($scope, $location, Crew){
   $scope.crew = Crew.query();
 
   $scope.destroy = function(id) {
     if (confirm("Are you sure?")) {
       Crew.remove({id: id}, function(response){
-        $route.reload();
+        angular.forEach($scope.crew, function(e, i) {
+          if(e.id === id) {
+            $scope.crew.splice(i, 1);
+            return;
+          }
+        });
       });
     }
   };
