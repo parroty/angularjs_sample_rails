@@ -8,6 +8,7 @@ var app = angular.module('app', ["ngResource"]).
   }).
   config(["$httpProvider", function(provider) {
     provider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
+    provider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
   }]);
 
 app.factory("Crew", function($resource) {

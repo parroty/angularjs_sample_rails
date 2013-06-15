@@ -11,6 +11,6 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require jquery
-//= require angular
-//= require angular-resource
+//= require unstable/angular
+//= require unstable/angular-resource
 //= require_tree .
